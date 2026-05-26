@@ -8,7 +8,7 @@ let bestScore = localStorage.getItem("bestScore") || 0;
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 let score = 0;
-let frames = 0;
+let spawnTimer = 60;
 
 const player = {
   width: 40,
@@ -41,15 +41,19 @@ function spawnEnemy() {
   // Düşmən səhnədən kənara çıxmasın deyə maksimum (canvas.width - size) arasında random yer seçirik
   const randomX = Math.random() * (canvas.width - size);
 
-  // Yeni düşmən obyektini yaradıb massivə əlavə edirik
-  enemies.push({
-    x: randomX,
-    y: -size, // Səhnənin yuxarısından (görünməz yerdən) başlasın deyə mənfi dəyər veririk
-    width: size,
-    height: size,
-    speed: 3, // Düşmənin düşmə sürəti (oyunçudan bir az yavaş)
-    color: "#ff0055", // Neon qırmızı/çəhrayı
-  });
+
+  
+// YENİLİK: Sürət xala görə yavaş-yavaş artır (Hər 100 xalda 0.5 artır)
+    // Başlanğıc sürət 3-dür.
+    const dynamicSpeed = 3 + (score * 0.005); 
+
+    enemies.push({
+        x: randomX,
+        y: -size, 
+        width: size,
+        height: size,
+        speed: dynamicSpeed, // Sabit 3 əvəzinə dinamik sürəti veririk
+        color: "#ff0055"})
 }
 
 // Düşmənləri ekrana çəkən funksiya
@@ -170,11 +174,16 @@ function drawScore() {
 function gameLoop() {
   // 1. Məntiqi yenilə
   if (isGameOver) return;
-  frames++;
+  spawnTimer--;
   // Əgər kadr sayı 60-a tam bölünürsə (yəni hər ~1 saniyədən bir) düşmən yarat
-  if (frames % 60 === 0) {
-    spawnEnemy();
-  }
+  if (spawnTimer <= 0) {
+        spawnEnemy(); // Taymer sıfıra çatanda düşmən yaradırıq
+        
+        // Yeni taymeri hesablayırıq: Xal artdıqca düşmənlər daha tez gəlir.
+        // Amma Math.max sayəsində bu rəqəm HES VAXT 25-dən aşağı düşmür (keçilməz divar olmasın deyə).
+        let nextInterval = 60 - Math.floor(score / 20);
+        spawnTimer = Math.max(25, nextInterval);
+    }
   // 1. Məntiqi yenilə
   update();
   updateEnemies();
@@ -194,16 +203,12 @@ function gameLoop() {
 requestAnimationFrame(gameLoop);
 let isGameOver = false;
 restartButton.addEventListener("click", () => {
-  // 1. Bütün dəyərləri əvvəlki (başlanğıc) halına qaytarırıq
-  score = 0;
-  frames = 0;
-  enemies.length = 0; // Massivin içini təmizləyirik ki, köhnə düşmənlər itsin
-  player.x = 205; // Oyunçunu mərkəzə qaytarırıq
-  isGameOver = false;
+    score = 0;
+    spawnTimer = 60; // YENİLİK: Taymeri başlanğıc halına qaytarırıq
+    enemies.length = 0; 
+    player.x = 205; 
+    isGameOver = false;
 
-  // 2. Menyununu yenidən gizlədirik
-  gameOverScreen.classList.add("hidden");
-
-  // 3. Oyun dövrünü (loop) yenidən işə salırıq
-  requestAnimationFrame(gameLoop);
+    gameOverScreen.classList.add("hidden");
+    requestAnimationFrame(gameLoop);
 });

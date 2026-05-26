@@ -25,22 +25,6 @@ function spawnEnemy() {
   // Düşmən səhnədən kənara çıxmasın deyə maksimum (canvas.width - size) arasında random yer seçirik
   const randomX = Math.random() * (canvas.width - size);
 
-  // Yeni düşmən obyektini yaradıb massivə əlavə edirik
-  enemies.push({
-    x: randomX,
-    y: -size, // Səhnənin yuxarısından (görünməz yerdən) başlasın deyə mənfi dəyər veririk
-    width: size,
-    height: size,
-    speed: 3, // Düşmənin düşmə sürəti (oyunçudan bir az yavaş)
-    color: "#ff0055", // Neon qırmızı/çəhrayı
-  });
-}
-
-function spawnEnemy() {
-  const size = 40; // Düşmənin ölçüsü
-  // Düşmən səhnədən kənara çıxmasın deyə maksimum (canvas.width - size) arasında random yer seçirik
-  const randomX = Math.random() * (canvas.width - size);
-
 
   
 // YENİLİK: Sürət xala görə yavaş-yavaş artır (Hər 100 xalda 0.5 artır)

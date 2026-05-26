@@ -23,6 +23,34 @@ body {
 #gameWrapper {
     position: relative; /* İçindəki UI elementlərini kənara çıxmağa qoymur */
 }
+#startScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.6); 
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10; /* Canvas-ın və digər elementlərin üstündə qalması üçün */
+    border-radius: 8px;
+    transition: all 0.5s ease-in-out; /* Səhnənin yumşaq itməsi üçün */
+}
+
+#startScreen h1 {
+    color: #00f0ff; /* Neon mavi oyunçu rəngi ilə eyni */
+    font-size: 48px;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-shadow: 0 0 6px #00f0ff, 0 0 18px #00f0ff; /* Güclü parlama effekti */
+    text-align: center;
+}
 
 #gameOverScreen {
     position: absolute;
@@ -52,17 +80,27 @@ body {
     margin-bottom: 20px;
 }
 
-#restartButton {
-    padding: 10px 25px;
-    font-size: 18px;
-    cursor: pointer;
-    background-color: #00f0ff;
-    color: #0f172a;
-    border: none;
-    border-radius: 5px;
+#restartButton,#startButton {
+    margin-top: 24px;
+    padding: 15px 36px;
+    font-size: 22px;
     font-weight: bold;
+    color: #0f172a; /* Mətn rəngi tünd (kontrast üçün) */
+    background-color: #00f0ff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
     box-shadow: 0 0 15px #00f0ff;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
+#startButton:hover
+,#restartButton:hover {
+    box-shadow: 0 0 10px #00eeff63, 0 0 20px #00eeff63; 
+}
+
+
 /* Elementi gizlətmək üçün xüsusi sinif (class) */
 .hidden {
     display: none !important;

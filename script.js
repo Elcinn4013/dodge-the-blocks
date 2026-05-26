@@ -2,6 +2,8 @@
 const gameOverScreen = document.getElementById("gameOverScreen");
 const finalScoreElement = document.getElementById("finalScore");
 const restartButton = document.getElementById("restartButton");
+const startScreen = document.getElementById('startScreen');
+const startButton = document.getElementById("startButton");
 const bestFinalScoreElement = document.getElementById("bestFinalScore");
 // Yaddaşdan ən yüksək xalı oxuyuruq (əgər yoxdursa 0 təyin edirik)
 let bestScore = localStorage.getItem("bestScore") || 0;
@@ -25,19 +27,18 @@ function spawnEnemy() {
   // Düşmən səhnədən kənara çıxmasın deyə maksimum (canvas.width - size) arasında random yer seçirik
   const randomX = Math.random() * (canvas.width - size);
 
+  // YENİLİK: Sürət xala görə yavaş-yavaş artır (Hər 100 xalda 0.5 artır)
+  // Başlanğıc sürət 3-dür.
+  const dynamicSpeed = 3 + score * 0.005;
 
-  
-// YENİLİK: Sürət xala görə yavaş-yavaş artır (Hər 100 xalda 0.5 artır)
-    // Başlanğıc sürət 3-dür.
-    const dynamicSpeed = 3 + (score * 0.005); 
-
-    enemies.push({
-        x: randomX,
-        y: -size, 
-        width: size,
-        height: size,
-        speed: dynamicSpeed, // Sabit 3 əvəzinə dinamik sürəti veririk
-        color: "#ff0055"})
+  enemies.push({
+    x: randomX,
+    y: -size,
+    width: size,
+    height: size,
+    speed: dynamicSpeed, // Sabit 3 əvəzinə dinamik sürəti veririk
+    color: "#ff0055",
+  });
 }
 
 // Düşmənləri ekrana çəkən funksiya
@@ -114,7 +115,7 @@ function updateEnemies() {
 
       // Ekranda yekun xalı göstərib, "Game Over" menyusunu açırıq
       finalScoreElement.innerText = score;
-      bestFinalScoreElement.innerText = bestScore; 
+      bestFinalScoreElement.innerText = bestScore;
       gameOverScreen.classList.remove("hidden");
     }
 
@@ -161,13 +162,13 @@ function gameLoop() {
   spawnTimer--;
   // Əgər kadr sayı 60-a tam bölünürsə (yəni hər ~1 saniyədən bir) düşmən yarat
   if (spawnTimer <= 0) {
-        spawnEnemy(); // Taymer sıfıra çatanda düşmən yaradırıq
-        
-        // Yeni taymeri hesablayırıq: Xal artdıqca düşmənlər daha tez gəlir.
-        // Amma Math.max sayəsində bu rəqəm HES VAXT 25-dən aşağı düşmür (keçilməz divar olmasın deyə).
-        let nextInterval = 60 - Math.floor(score / 20);
-        spawnTimer = Math.max(25, nextInterval);
-    }
+    spawnEnemy(); // Taymer sıfıra çatanda düşmən yaradırıq
+
+    // Yeni taymeri hesablayırıq: Xal artdıqca düşmənlər daha tez gəlir.
+    // Amma Math.max sayəsində bu rəqəm HES VAXT 25-dən aşağı düşmür (keçilməz divar olmasın deyə).
+    let nextInterval = 60 - Math.floor(score / 20);
+    spawnTimer = Math.max(25, nextInterval);
+  }
   // 1. Məntiqi yenilə
   update();
   updateEnemies();
@@ -184,15 +185,19 @@ function gameLoop() {
 }
 
 // Oyunu başlat
-requestAnimationFrame(gameLoop);
 let isGameOver = false;
 restartButton.addEventListener("click", () => {
-    score = 0;
-    spawnTimer = 60; // YENİLİK: Taymeri başlanğıc halına qaytarırıq
-    enemies.length = 0; 
-    player.x = 205; 
-    isGameOver = false;
+  score = 0;
+  spawnTimer = 60; // YENİLİK: Taymeri başlanğıc halına qaytarırıq
+  enemies.length = 0;
+  player.x = 205;
+  isGameOver = false;
 
-    gameOverScreen.classList.add("hidden");
-    requestAnimationFrame(gameLoop);
+  gameOverScreen.classList.add("hidden");
+  requestAnimationFrame(gameLoop);
+});
+startButton.addEventListener("click", () => {
+  requestAnimationFrame(gameLoop);
+  startScreen.classList.add("hidden")
+  
 });

@@ -22,6 +22,7 @@ const particles = []; // Zərrəcikləri saxlayacaq massiv
 let isExploding = false; // Partlayış vəziyyətindəyikmi?
 let explosionTimer = 60;
 
+const floatingTexts = [];
 
 const player = {
     width: 30,
@@ -67,6 +68,37 @@ function createExplosion(x, y, color) {
         });
     }
 }
+function createFloatingText(text, x, y, color) {
+    floatingTexts.push({
+        text: text,
+        x: x,
+        y: y,
+        color: color,
+        alpha: 1 // Tam görünür
+    });
+}
+
+function updateAndDrawFloatingTexts() {
+    for (let i = 0; i < floatingTexts.length; i++) {
+        let ft = floatingTexts[i];
+
+        ft.y -= 0.5; // Yazı yavaş-yavaş yuxarı qalxır
+        ft.alpha -= 0.01; // Yavaş-yavaş şəffaflaşır
+
+        ctx.globalAlpha = Math.max(0, ft.alpha);
+        ctx.fillStyle = ft.color;
+        ctx.font = "bold 20px 'Segoe UI', Arial";
+
+        // Mətni tam mərkəzə salmaq üçün kiçik riyazi tənzimləmə
+        ctx.fillText(ft.text, ft.x - 15, ft.y);
+        ctx.globalAlpha = 1;
+
+        if (ft.alpha <= 0) {
+            floatingTexts.splice(i, 1);
+            i--;
+        }
+    }
+}
 
 function updateParticles() {
     for (let i = 0; i < particles.length; i++) {
@@ -80,6 +112,7 @@ function updateParticles() {
             particles.splice(i, 1);
             i--;
         }
+
     }
 }
 
@@ -113,14 +146,14 @@ function spawnPowerUp() {
     const randomX = Math.random() * (canvas.width - size);
 
     // Təsadüfi olaraq gücün növünü seçirik
-    const types = ['slow', 'shield', 'shrink'];
+    const types = ['slow', 'shield', 'shrink', 'bonus'];
     const type = types[Math.floor(Math.random() * types.length)];
 
     let color;
     if (type === 'slow') color = "#ffd700"; // Qızılı / Sarı
     else if (type === 'shield') color = "#00ff00"; // Yaşıl
     else if (type === 'shrink') color = "#b900ff"; // Bənövşəyi
-
+    else if (type === 'bonus') color = "#ff8800";
     powerUps.push({
         x: randomX,
         y: -100,
@@ -149,12 +182,27 @@ function updatePowerUps() {
         if (collides(player, powerUps[i])) {
             const type = powerUps[i].type;
 
-            if (type === 'slow') {
-                slowMotionTimer = 600; // Təxminən 5 saniyə (60 kadr * 5)
-            } else if (type === 'shield') {
-                isShieldActive = true;
-            } else if (type === 'shrink') {
-                shrinkTimer = 600; // Təxminən 5 saniyə
+            if (collides(player, powerUps[i])) {
+                const type = powerUps[i].type;
+                createExplosion(powerUps[i].x + powerUps[i].width / 2, powerUps[i].y + powerUps[i].height / 2, powerUps[i].color);
+                if (type === 'slow') {
+                    slowMotionTimer = 600;
+                    // YENİLİK: Başının üstündə yazı çıxır
+                    createFloatingText("SLOW MO!", player.x, player.y - 10, powerUps[i].color);
+                } else if (type === 'shield') {
+                    isShieldActive = true;
+                    createFloatingText("SHIELD!", player.x, player.y - 10, powerUps[i].color);
+                } else if (type === 'shrink') {
+                    shrinkTimer = 600;
+                    createFloatingText("SHRINK!", player.x, player.y - 10, powerUps[i].color);
+                } else if (type === 'bonus') {
+                    score += 50;
+                    createFloatingText("+50 POINTS", player.x, player.y - 10, powerUps[i].color);
+                }
+
+                powerUps.splice(i, 1);
+                i--;
+                continue;
             }
 
             powerUps.splice(i, 1);
@@ -341,14 +389,16 @@ function gameLoop() {
     update();
     updateEnemies();
     updatePowerUps();
-    // 2. Ekranı təmizlə
+    updateParticles();// 2. Ekranı təmizlə
     clearScreen();
 
     // 3. Elementləri yenidən çək
     drawPlayer();
     drawScore();
     drawPowerUps();
+    drawParticles();
     drawEnemies();
+    updateAndDrawFloatingTexts();
 
     requestAnimationFrame(gameLoop);
 }
@@ -376,6 +426,7 @@ restartButton.addEventListener("click", () => {
     isShieldActive = false;
     slowMotionTimer = 0;
     shrinkTimer = 0;
+    floatingTexts.length = 0;
 
     // 5. PARTLAYIŞI SIFIRLAYIRIQ (Əskik olan hissə bura idi)
     isExploding = false;

@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Dodge the Blocks (Canvas)</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div id="gameWrapper">
-    <canvas id="gameCanvas" width="450" height="600"></canvas>
-    
-    <div id="gameOverScreen" class="hidden">
-        <h1>Game Over!</h1>
-        <p>Score: <span id="finalScore">0</span></p>
-        <p>Best Score: <span id="bestFinalScore">0</span></p>
-        <button id="restartButton">Restart</button>
-    </div>
-    <div id="startScreen" >
-        <h1>Dodge Blocks</h1>
-        <button id="startButton">Start</button>   
-    </div>
+        <canvas id="gameCanvas" width="450" height="600"></canvas>
 
-</div>
+        <div id="gameOverScreen" class="hidden">
+            <h1>Game Over!</h1>
+            <p>Score: <span id="finalScore">0</span></p>
+            <p>Best Score: <span id="bestFinalScore">0</span></p>
+            <button id="restartButton">Restart</button>
+        </div>
+        <div id="startScreen">
+            <h1>Dodge Blocks</h1>
+            <button id="startButton">Start</button>
+        </div>
+
+    </div>
 </body>
 <script src="script.js"></script>
 

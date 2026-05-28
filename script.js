@@ -333,6 +333,30 @@ function update() {
         player.x = canvas.width - player.width;
     }
 }
+
+document.addEventListener("touchstart", (e) => {
+    // İlk toxunan barmağın X koordinatını alırıq
+    const touchX = e.touches[0].clientX;
+    const screenWidth = window.innerWidth;
+
+    // Əgər ekranın sol tərəfinə toxunulubsa
+    if (touchX < screenWidth / 2) {
+        keys["ArrowLeft"] = true;
+        keys["ArrowRight"] = false; // Əgər digər tərəfə gedirdisə dayandırır
+    }
+    // Əgər ekranın sağ tərəfinə toxunulubsa
+    else {
+        keys["ArrowRight"] = true;
+        keys["ArrowLeft"] = false;
+    }
+});
+
+// Mobildə barmağı ekrandan çəkəndə (Touch End)
+document.addEventListener("touchend", () => {
+    // Bütün hərəkətləri dayandırırıq
+    keys["ArrowLeft"] = false;
+    keys["ArrowRight"] = false;
+});
 function drawScore() {
     ctx.fillStyle = "#ffffff";
     ctx.font = "20px Arial";

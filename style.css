@@ -7,17 +7,21 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
+    overflow: hidden;
     justify-content: center;
     align-items: center;
     height: 100vh;
     background-color: #0f172a; /* Çox tünd göy/qara arxa plan */
 }
-
 #gameCanvas {
     background-color: #1e293b; /* Səhnə üçün bir az daha açıq tünd rəng */
     border: 2px solid #334155; /* İncə və müasir çərçivə */
     border-radius: 8px;
+    max-width: 100%;
+    max-height: 100vh;
+    object-fit: contain;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); /* Səhnənin özünü ekrandan qabarıq göstərmək üçün kölgə */
+    touch-action: none; /* Mobildə toxunma sürüşdürmələrini bloklayır */
 }
 
 #gameWrapper {
